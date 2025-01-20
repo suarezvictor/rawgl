@@ -4,6 +4,16 @@
  * Copyright (C) 2004-2005 Gregory Montoir (cyx@users.sourceforge.net)
  */
 
+#ifdef DISABLE_AUDIO
+#include "sfxplayer.h"
+
+SfxPlayer::SfxPlayer(Resource *res)
+	: _res(res), _delay(0) {
+	_playing = false;
+}
+
+#else
+
 #include "sfxplayer.h"
 #include "mixer.h"
 #include "resource.h"
@@ -224,3 +234,4 @@ void SfxPlayer::handlePattern(uint8_t channel, const uint8_t *data) {
 		ch->pos.inc = (freq << Frac::BITS) / _rate;
 	}
 }
+#endif //DISABLE_AUDIO

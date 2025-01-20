@@ -54,7 +54,9 @@ void Engine::run() {
 		_script.updateInput();
 		processInput();
 		_script.runTasks();
+#ifndef DISABLE_AUDIO
 		_mix.update();
+#endif
 		if (_res.getDataType() == Resource::DT_3DO) {
 			switch (_res._nextPart) {
 			case 16009:
@@ -98,6 +100,9 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 	}
 	_script.init();
 	MixerType mixerType = kMixerTypeRaw;
+#ifdef DISABLE_AUDIO
+	(void) mixerType;
+#endif
 	switch (_res.getDataType()) {
 	case Resource::DT_DOS:
 	case Resource::DT_AMIGA:
@@ -123,7 +128,9 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 		mixerType = kMixerTypeAiff;
 		break;
 	}
+#ifndef DISABLE_AUDIO
 	_mix.init(mixerType);
+#endif
 #ifndef BYPASS_PROTECTION
 	switch (_res.getDataType()) {
 	case Resource::DT_DOS:
@@ -155,8 +162,10 @@ void Engine::setup(Language lang, int graphicsType, const char *scalerName, int 
 
 void Engine::finish() {
 	_graphics->fini();
+#ifndef DISABLE_AUDIO	
 	_ply.stop();
 	_mix.quit();
+#endif
 	_res.freeMemBlock();
 }
 

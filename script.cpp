@@ -351,23 +351,32 @@ void Script::op_playSound() {
 	uint8_t vol = _scriptPtr.fetchByte();
 	uint8_t channel = _scriptPtr.fetchByte();
 	debug(DBG_SCRIPT, "Script::op_playSound(0x%X, %d, %d, %d)", resNum, freq, vol, channel);
+#ifndef DISABLE_AUDIO
 	snd_playSound(resNum, freq, vol, channel);
+#endif
 }
 
 static void preloadSoundCb(void *userdata, int soundNum, const uint8_t *data) {
+#ifndef DISABLE_AUDIO
 	((Script *)userdata)->snd_preloadSound(soundNum, data);
+#endif
 }
 
 void Script::op_updateResources() {
 	uint16_t num = _scriptPtr.fetchWord();
 	debug(DBG_SCRIPT, "Script::op_updateResources(%d)", num);
 	if (num == 0) {
+#ifndef DISABLE_AUDIO
 		_ply->stop();
 		_mix->stopAll();
+#endif
 		_res->invalidateRes();
-	} else {
+	}
+#ifndef DISABLE_AUDIO
+	else {
 		_res->update(num, preloadSoundCb, this);
 	}
+#endif
 }
 
 void Script::op_playMusic() {
@@ -375,12 +384,16 @@ void Script::op_playMusic() {
 	uint16_t delay = _scriptPtr.fetchWord();
 	uint8_t pos = _scriptPtr.fetchByte();
 	debug(DBG_SCRIPT, "Script::op_playMusic(0x%X, %d, %d)", resNum, delay, pos);
+#ifndef DISABLE_AUDIO
 	snd_playMusic(resNum, delay, pos);
+#endif
 }
 
 void Script::restartAt(int part, int pos) {
+#ifndef DISABLE_AUDIO
 	_ply->stop();
 	_mix->stopAll();
+#endif
 	if (_res->getDataType() == Resource::DT_20TH_EDITION) {
 		_scriptVars[0xBF] = _difficulty; // difficulty (0 to 2)
 		// _scriptVars[0xDB] = 1; // preload sounds (resnum >= 2000)
@@ -742,6 +755,7 @@ static int getSoundFreq(uint8_t period) {
 
 void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t channel) {
 	debug(DBG_SND, "snd_playSound(0x%X, %d, %d, %d)", resNum, freq, vol, channel);
+#ifndef DISABLE_AUDIO
 	if (vol == 0) {
 		_mix->stopSound(channel);
 		return;
@@ -790,10 +804,13 @@ void Script::snd_playSound(uint16_t resNum, uint8_t freq, uint8_t vol, uint8_t c
 		}
 		break;
 	}
+#endif
 }
+
 
 void Script::snd_playMusic(uint16_t resNum, uint16_t delay, uint8_t pos) {
 	debug(DBG_SND, "snd_playMusic(0x%X, %d, %d)", resNum, delay, pos);
+#ifndef DISABLE_AUDIO
 	uint8_t loop = 0;
 	switch (_res->getDataType()) {
 	case Resource::DT_20TH_EDITION:
@@ -839,12 +856,15 @@ void Script::snd_playMusic(uint16_t resNum, uint16_t delay, uint8_t pos) {
 		}
 		break;
 	}
+#endif
 }
 
 void Script::snd_preloadSound(uint16_t resNum, const uint8_t *data) {
+#ifndef DISABLE_AUDIO
 	if (_res->getDataType() == Resource::DT_3DO) {
 		_mix->preloadSoundAiff(resNum, data);
 	}
+#endif
 }
 
 void Script::fixUpPalette_changeScreen(int part, int screen) {

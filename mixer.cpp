@@ -3,6 +3,17 @@
  * Another World engine rewrite
  * Copyright (C) 2004-2005 Gregory Montoir (cyx@users.sourceforge.net)
  */
+#ifdef DISABLE_AUDIO
+#warning audio disabled
+
+#include "mixer.h"
+#include "sfxplayer.h"
+
+Mixer::Mixer(SfxPlayer *sfx)
+	: _aifc(0), _sfx(sfx) {
+}
+
+#else
 
 #include <SDL.h>
 #define MIX_INIT_FLUIDSYNTH MIX_INIT_MID // renamed with SDL2_mixer >= 2.0.2
@@ -522,3 +533,5 @@ void Mixer::playSoundAiff(uint8_t channel, uint8_t num, uint8_t volume) {
 		return _impl->playSoundAiff(channel, num, volume);
 	}
 }
+
+#endif //DISABLE_AUDIO

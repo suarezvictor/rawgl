@@ -96,13 +96,13 @@ static int getGraphicsType(Resource::DataType type) {
 	}
 }
 
-struct Scaler {
+struct ScalerSel {
 	char name[32];
 	int factor;
 };
 
-static void parseScaler(char *name, Scaler *s) {
-	char *sep = strchr(name, '@');
+static void parseScaler(const char *name, ScalerSel *s) {
+	char *sep = strchr((char *) name, '@');
 	if (sep) {
 		*sep = 0;
 		strncpy(s->name, name, sizeof(s->name) - 1);
@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
 	dm.width  = DEFAULT_WINDOW_W;
 	dm.height = DEFAULT_WINDOW_H;
 	dm.opengl = (graphicsType == GRAPHICS_GL);
-	Scaler scaler;
+	ScalerSel scaler;
 	scaler.name[0] = 0;
 	scaler.factor = 1;
 	bool defaultGraphics = true;

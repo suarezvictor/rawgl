@@ -25,6 +25,7 @@ static const char USAGE[] =
 	"  --fullscreen      Fullscreen display (stretched)\n"
 	"  --fullscreen-ar   Fullscreen display (16:10 aspect ratio)\n"
 	"  --ega-palette     Use EGA palette with DOS version\n"
+	"  --hicolor         Use RGB555 color\n"
 	"  --demo3-joy       Use inputs from 'demo3.joy' (DOS demo)\n"
 	"  --difficulty=DIFF Difficulty (easy,normal,hard)\n"
 	"  --audio=AUDIO     Audio (original,remastered)\n"
@@ -149,6 +150,7 @@ int main(int argc, char *argv[]) {
 			{ "fullscreen-ar", no_argument,  0, 'a' },
 			{ "scaler",   required_argument, 0, 's' },
 			{ "ega-palette", no_argument,    0, 'e' },
+			{ "hicolor", no_argument,    0, 'H' },
 			{ "demo3-joy",  no_argument,     0, 'j' },
 			{ "difficulty", required_argument, 0, 'i' },
 			{ "audio",    required_argument, 0, 'u' },
@@ -203,6 +205,9 @@ int main(int argc, char *argv[]) {
 		case 'j':
 			demo3JoyInputs = true;
 			break;
+		case 'H':
+			Graphics::_use555 = true;
+			break;
 		case 'i':
 			for (int i = 0; DIFFICULTIES[i].name; ++i) {
 				if (strcmp(optarg, DIFFICULTIES[i].name) == 0) {
@@ -225,7 +230,7 @@ int main(int argc, char *argv[]) {
 			return 0;
 		}
 	}
-	g_debugMask = DBG_INFO; // | DBG_VIDEO | DBG_SND | DBG_SCRIPT | DBG_BANK | DBG_SER;
+	g_debugMask = DBG_INFO | DBG_VIDEO; //  | DBG_SND | DBG_SCRIPT | DBG_BANK | DBG_SER;
 	Engine *e = new Engine(dataPath, part);
 	if (defaultGraphics) {
 		// if not set, use original software graphics for 199x editions and GL for the anniversary and 3DO versions
